@@ -1,0 +1,5 @@
+library(naniar)
+library(dplyr)
+
+dane <- read.csv("Hipoteczny.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+
