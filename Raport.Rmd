@@ -1,0 +1,17 @@
+
+1. Podsumowanie brakujących danych 
+
+Wyniki funkcji miss_var_summary() wskazują:
+Credit_History: 29 brakujących wartości (7.90%).
+Loan_Amount_Term: 6 brakujących wartości (1.63%).
+LoanAmount: 5 brakujących wartości (1.36%).
+Pozostałe zmienne (Loan_ID, Gender, Married, itp.) nie zawierają braków.
+
+Analiza funkcji miss_case_table() wskazuje:
+328 wierszy (89.4%) zawiera kompletne dane.
+38 wierszy (10.4%) ma brak w jednej zmiennej.
+1 wiersz (0.272%) ma braki w dwóch zmiennych.
+
+Współwystępowanie braków zostało zilustrowane za pomocą gg_miss_upset().
+Wyniki wskazują, że braki rzadko ze sobą współistnieją.
+Jedynym przypadkiem jest współistniejący brak w Credit_History i Loan_Amount_Term.
