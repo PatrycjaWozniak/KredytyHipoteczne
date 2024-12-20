@@ -139,4 +139,64 @@ hist(
   breaks = 20 
 )
 
+#Wykresy pudełkowe dla kluczowych zmiennych
+#Identyfikujemy dane odtające i porównujemy rozkłady między grupami
+boxplot(
+  data$LoanAmount,
+  main = "Wykres pudełkowy dla LoanAmount (dane uzupełnione)",
+  ylab = "Kwota pożyczki",
+  col = "lightblue",
+  border = "black"
+)
+#szukamy odstających punktów
+outliers <- boxplot.stats(data$LoanAmount)$out
+print(outliers)
+
+# dane [1] wykazują duże odchylenia w stosunku do reszty danych
+#czy powinnyśmy je usunąć?
+
+boxplot(
+  data$ApplicantIncome,
+  main = "Wykres pudełkowy dla ApplicantIncome",
+  ylab = "Dochód wnioskodawcy",
+  col = "lightgreen",
+  border = "black"
+)
+
+boxplot(
+  data$CoapplicantIncome,
+  main = "Wykres pudełkowy dla CoapplicantIncome",
+  ylab = "Dochód współwnioskodawcy",
+  col = "lightpink",
+  border = "black"
+)
+
+boxplot(
+  data$Loan_Amount_Term,
+  main = "Wykres pudełkowy dla Loan_Amount_Term",
+  ylab = "Termin pożyczki",
+  col = "pink",
+  border = "black"
+)
+
+#porównanie grup
+boxplot(
+  LoanAmount ~ Married,
+  data = dane,
+  main = "Wykres pudełkowy LoanAmount względem Married",
+  xlab = "Stan cywilny",
+  ylab = "Kwota pożyczki",
+  col = c("lightblue", "lightgreen"),
+  border = "black"
+)
+
+boxplot(
+  ApplicantIncome ~ Education,
+  data = dane,
+  main = "Wykres pudełkowy ApplicantIncome względem Education",
+  xlab = "Wykształcenie",
+  ylab = "Dochód wnioskodawcy",
+  col = c("lightblue", "lightpink"),
+  border = "black"
+)
 
