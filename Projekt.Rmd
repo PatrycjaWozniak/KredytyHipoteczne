@@ -156,7 +156,7 @@ print(outliers)
 #czy powinnyśmy je usunąć?
 
 boxplot(
-  data$ApplicantIncome,
+  dane$ApplicantIncome,
   main = "Wykres pudełkowy dla ApplicantIncome",
   ylab = "Dochód wnioskodawcy",
   col = "lightgreen",
@@ -164,7 +164,7 @@ boxplot(
 )
 
 boxplot(
-  data$CoapplicantIncome,
+  dane$CoapplicantIncome,
   main = "Wykres pudełkowy dla CoapplicantIncome",
   ylab = "Dochód współwnioskodawcy",
   col = "lightpink",
@@ -172,7 +172,7 @@ boxplot(
 )
 
 boxplot(
-  data$Loan_Amount_Term,
+  dane$Loan_Amount_Term,
   main = "Wykres pudełkowy dla Loan_Amount_Term",
   ylab = "Termin pożyczki",
   col = "pink",
