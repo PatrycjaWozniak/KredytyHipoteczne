@@ -29,6 +29,26 @@ dane %>%
     miss_var_summary() %>%
     print(n=33)
  
+ dane %>%
+  group_by(Gender) %>%
+    miss_var_summary() %>%
+    print(n=33)
+    
+dane %>%
+  group_by(Education) %>%
+    miss_var_summary() %>%
+    print(n=22)
+
+dane %>%
+  group_by(CoapplicantIncome) %>%
+    miss_var_summary() %>%
+    print(n=10)
+
+dane %>%
+  group_by(Credit_History) %>%
+    miss_var_summary() %>%
+    print(n=33)
+ 
  
 #Tabela podsumowująca brakujące wartości według wiersza    
 dane %>%
@@ -43,6 +63,12 @@ gg_miss_fct(dane, fct = Married)
 gg_miss_fct(dane, fct = Self_Employed)
 gg_miss_fct(dane, fct = LoanAmount)
 gg_miss_fct(dane, fct = Property_Area)
+  
+gg_miss_fct(dane, fct = Gender)
+gg_miss_fct(dane, fct = Education)
+gg_miss_fct(dane, fct = CoapplicantIncome)
+gg_miss_fct(dane, fct = Credit_History)  
+  
   
 #Wizualizacja jak często braki współwystępują między zmiennymi 
 #(1 wiersz braku w Credit_History i Loan_Amount_Team)
