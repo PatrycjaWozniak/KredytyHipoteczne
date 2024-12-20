@@ -77,3 +77,66 @@ gg_miss_upset(dane,
 #najwięcej brakuje danych w credit history
 library(VIM)
 data <-hotdeck(dane)
+
+#analiza danych odstających 
+# Tworzenie histogramów
+hist(
+  dane$LoanAmount,
+  main = "Histogram wartości LoanAmount",
+  xlab = "LoanAmount",
+  ylab = "Częstość",
+  col = "lightblue",
+  border = "black",
+  breaks = 20 # Możesz dostosować liczbę przedziałów
+)
+
+hist(
+  dane$ApplicantIncome,
+  main = "Histogram dla ApplicantIncome",
+  xlab = "Dochód wnioskodawcy",
+  ylab = "Częstość",
+  col = "lightblue",
+  border = "black",
+  breaks = 20 
+)
+
+hist(
+  dane$CoapplicantIncome,
+  main = "Histogram dla CoapplicantIncome",
+  xlab = "Dochód współwnioskodawcy",
+  ylab = "Częstość",
+  col = "lightblue",
+  border = "black",
+  breaks = 20 
+)
+
+hist(
+  dane$LoanAmount,
+  main = "Histogram dla LoanAmount",
+  xlab = "Kwota pożyczki",
+  ylab = "Częstość",
+  col = "lightblue",
+  border = "black",
+  breaks = 20 
+)
+
+hist(
+  dane$Loan_Amount_Term,
+  main = "Histogram dla Loan_Amount_Term",
+  xlab = "Termin kwoty pożyczki",
+  ylab = "Częstość",
+  col = "lightblue",
+  border = "black",
+  breaks = 20 
+)
+hist(
+  dane$Credit_History,
+  main = "Histogram dla Credit_History",
+  xlab = "Historia Kredytu",
+  ylab = "Częstość",
+  col = "lightblue",
+  border = "black",
+  breaks = 20 
+)
+
+
