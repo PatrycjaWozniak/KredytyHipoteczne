@@ -75,3 +75,5 @@ gg_miss_fct(dane, fct = Credit_History)
 gg_miss_upset(dane, 
               nsets = 3)
 #najwięcej brakuje danych w credit history
+library(VIM)
+data <-hotdeck(dane)
