@@ -3,10 +3,24 @@ library(dplyr)
 
 dane <- read.csv("Hipoteczny.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
 
+# Zamiana pustych wartości na NA
+dane <- dane %>%
+  mutate(Gender = ifelse(Gender == "" | Gender == "NULL" | Gender == "N/A", NA, Gender)) %>%
+  mutate(Married = ifelse(Married == "" | Married == "NULL" | Married == "N/A", NA, Married)) %>%
+  mutate(Dependents = ifelse(Dependents == "" | Dependents == "NULL" | Dependents == "N/A", NA, Dependents)) %>%
+  mutate(Education = ifelse(Education == "" | Education == "NULL" | Education == "N/A", NA, Education)) %>%
+  mutate(Self_Employed = ifelse(Self_Employed == "" | Self_Employed == "NULL" | Self_Employed == "N/A", NA, Self_Employed)) %>%
+  mutate(ApplicantIncome = ifelse(ApplicantIncome == "" | ApplicantIncome == "NULL" | ApplicantIncome == "N/A", NA, ApplicantIncome)) %>%
+  mutate(CoapplicantIncome = ifelse(CoapplicantIncome == "" | CoapplicantIncome == "NULL" | CoapplicantIncome == "N/A", NA, CoapplicantIncome)) %>%
+  mutate(LoanAmount = ifelse(LoanAmount == "" | LoanAmount == "NULL" | LoanAmount == "N/A", NA, LoanAmount)) %>%
+  mutate(Loan_Amount_Term = ifelse(Loan_Amount_Term == "" | Loan_Amount_Term == "NULL" | Loan_Amount_Term == "N/A", NA, Loan_Amount_Term)) %>%
+  mutate(Credit_History = ifelse(Credit_History == "" | Credit_History == "NULL" | Credit_History == "N/A", NA, Credit_History)) %>%
+  mutate(Property_Area = ifelse(Property_Area== "" | Property_Area == "NULL" | Property_Area == "N/A", NA, Property_Area))
+
 #Utworzenie tabeli podsumowującej braki w tabeli 
 miss_var_summary(dane)
 
-#Braki są zauważalne jedynie w: Credit_History, Loan_Amount_Term, LoanAmount
+#Braki są zauważalne jedynie w: Credit_History, Self_Employed, Gender, Dependents, Loan_Amount_Term, LoanAmount
 
 #Utowrzenie tabel podsumowujących według poszczególnych kategori
 dane %>%
@@ -73,17 +87,19 @@ gg_miss_fct(dane, fct = Credit_History)
 #Wizualizacja jak często braki współwystępują między zmiennymi 
 #(1 wiersz braku w Credit_History i Loan_Amount_Team)
 gg_miss_upset(dane, 
-              nsets = 3)
+              nsets = 6)
 #najwięcej brakuje danych w credit history
 library(VIM)
 data <-hotdeck(dane)
+miss_var_summary(data)
+
 
 #analiza danych odstających 
 # Tworzenie histogramów
 hist(
-  dane$LoanAmount,
+  data$LoanAmount,
   main = "Histogram wartości LoanAmount",
-  xlab = "LoanAmount",
+  xlab = "Kwota pożyczki",
   ylab = "Częstość",
   col = "lightblue",
   border = "black",
@@ -91,7 +107,7 @@ hist(
 )
 
 hist(
-  dane$ApplicantIncome,
+  data$ApplicantIncome,
   main = "Histogram dla ApplicantIncome",
   xlab = "Dochód wnioskodawcy",
   ylab = "Częstość",
@@ -101,7 +117,7 @@ hist(
 )
 
 hist(
-  dane$CoapplicantIncome,
+  data$CoapplicantIncome,
   main = "Histogram dla CoapplicantIncome",
   xlab = "Dochód współwnioskodawcy",
   ylab = "Częstość",
@@ -111,7 +127,7 @@ hist(
 )
 
 hist(
-  dane$LoanAmount,
+  data$LoanAmount,
   main = "Histogram dla LoanAmount",
   xlab = "Kwota pożyczki",
   ylab = "Częstość",
@@ -121,7 +137,7 @@ hist(
 )
 
 hist(
-  dane$Loan_Amount_Term,
+  data$Loan_Amount_Term,
   main = "Histogram dla Loan_Amount_Term",
   xlab = "Termin kwoty pożyczki",
   ylab = "Częstość",
@@ -130,7 +146,7 @@ hist(
   breaks = 20 
 )
 hist(
-  dane$Credit_History,
+  data$Credit_History,
   main = "Histogram dla Credit_History",
   xlab = "Historia Kredytu",
   ylab = "Częstość",
@@ -156,7 +172,7 @@ print(outliers)
 #czy powinnyśmy je usunąć?
 
 boxplot(
-  dane$ApplicantIncome,
+  data$ApplicantIncome,
   main = "Wykres pudełkowy dla ApplicantIncome",
   ylab = "Dochód wnioskodawcy",
   col = "lightgreen",
@@ -164,7 +180,7 @@ boxplot(
 )
 
 boxplot(
-  dane$CoapplicantIncome,
+  data$CoapplicantIncome,
   main = "Wykres pudełkowy dla CoapplicantIncome",
   ylab = "Dochód współwnioskodawcy",
   col = "lightpink",
@@ -172,7 +188,7 @@ boxplot(
 )
 
 boxplot(
-  dane$Loan_Amount_Term,
+  data$Loan_Amount_Term,
   main = "Wykres pudełkowy dla Loan_Amount_Term",
   ylab = "Termin pożyczki",
   col = "pink",
@@ -182,7 +198,7 @@ boxplot(
 #porównanie grup
 boxplot(
   LoanAmount ~ Married,
-  data = dane,
+  data = data,
   main = "Wykres pudełkowy LoanAmount względem Married",
   xlab = "Stan cywilny",
   ylab = "Kwota pożyczki",
@@ -192,11 +208,22 @@ boxplot(
 
 boxplot(
   ApplicantIncome ~ Education,
-  data = dane,
+  data = data,
   main = "Wykres pudełkowy ApplicantIncome względem Education",
   xlab = "Wykształcenie",
   ylab = "Dochód wnioskodawcy",
   col = c("lightblue", "lightpink"),
   border = "black"
 )
+
+library(ggplot2)
+
+ggplot(data, aes(x=Education,y=LoanAmount))+
+  geom_boxplot() +
+  labs(title="Wysokość pożyczki wg wykształcenia", x="Wykształcenie", y="Wysokość pożyczki") +
+  theme_bw() + #typ kolorystyczny wykresu
+  facet_wrap(~Gender) +
+  coord_flip() #obraca wykres
+
+
 
