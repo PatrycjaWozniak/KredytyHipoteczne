@@ -224,6 +224,35 @@ ggplot(data, aes(x=Education,y=LoanAmount))+
   theme_bw() + #typ kolorystyczny wykresu
   facet_wrap(~Gender) +
   coord_flip() #obraca wykres
+  
+
+# Wykresy słupkowe skumulowane. Pokazanie związku między Credit_History a resztą danych chr
+ggplot(data, aes(x = Education, fill = factor(Credit_History))) +
+  geom_bar(position = "fill") +
+  labs(y = "Proporcja", fill = "Credit History") +
+  theme_minimal()
+  
+ggplot(data, aes(x = Gender, fill = factor(Credit_History))) +
+  geom_bar(position = "fill") +
+  labs(y = "Proporcja", fill = "Credit History") +
+  theme_minimal()
+  
+ggplot(data, aes(x = Married, fill = factor(Credit_History))) +
+  geom_bar(position = "fill") +
+  labs(y = "Proporcja", fill = "Credit History") +
+  theme_minimal()
+  
+ggplot(data, aes(x = Dependents, fill = factor(Credit_History))) +
+  geom_bar(position = "fill") +
+  labs(y = "Proporcja", fill = "Credit History") +
+  theme_minimal()
+  
+ggplot(data, aes(x = Self_Employed, fill = factor(Credit_History))) +
+  geom_bar(position = "fill") +
+  labs(y = "Proporcja", fill = "Credit History") +
+  theme_minimal()
+
+
 
 
 
