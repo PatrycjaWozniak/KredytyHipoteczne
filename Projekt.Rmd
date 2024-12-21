@@ -165,7 +165,7 @@ boxplot(
   border = "black"
 )
 #szukamy odstających punktów
-outliers <- boxplot.stats(data$LoanAmount)$out
+outliers <- boxplot.stats(dane$LoanAmount)$out
 print(outliers)
 
 # dane [1] wykazują duże odchylenia w stosunku do reszty danych
