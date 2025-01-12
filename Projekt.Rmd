@@ -159,7 +159,7 @@ hist(
 #Identyfikujemy dane odtające i porównujemy rozkłady między grupami
 boxplot(
   data$LoanAmount,
-  main = "Wykres pudełkowy dla LoanAmount (dane uzupełnione)",
+  main = "Wykres pudełkowy dla LoanAmount",
   ylab = "Kwota pożyczki",
   col = "lightblue",
   border = "black"
