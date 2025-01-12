@@ -1,17 +1,292 @@
+---
+title: "Kredyty Hipoteczne"
+author: 
+  - "Patrycja Woźniak"
+  - "Julia Zimmer"
+  - "Aleksandra Sieliwoniuk"
+output: pdf_document
+---
 
-1. Podsumowanie brakujących danych 
+Załadowanie potrzebnych bibliotek
 
-Wyniki funkcji miss_var_summary() wskazują:
-Credit_History: 29 brakujących wartości (7.90%).
-Loan_Amount_Term: 6 brakujących wartości (1.63%).
-LoanAmount: 5 brakujących wartości (1.36%).
-Pozostałe zmienne (Loan_ID, Gender, Married, itp.) nie zawierają braków.
+```{r}
+library(naniar)
+library(dplyr)
+library(VIM)
+library(ggplot2)
+```
 
-Analiza funkcji miss_case_table() wskazuje:
-328 wierszy (89.4%) zawiera kompletne dane.
-38 wierszy (10.4%) ma brak w jednej zmiennej.
-1 wiersz (0.272%) ma braki w dwóch zmiennych.
+Wprowadzenie danych
 
-Współwystępowanie braków zostało zilustrowane za pomocą gg_miss_upset().
-Wyniki wskazują, że braki rzadko ze sobą współistnieją.
-Jedynym przypadkiem jest współistniejący brak w Credit_History i Loan_Amount_Term.
+```{r}
+dane <- read.csv("Hipoteczny.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+```
+
+Zmiana pustych wartości na NA
+
+```{r}
+dane <- dane %>%
+  mutate(Gender = ifelse(Gender == "" | Gender == "NULL" | Gender == "N/A", NA, Gender)) %>%
+  mutate(Married = ifelse(Married == "" | Married == "NULL" | Married == "N/A", NA, Married)) %>%
+  mutate(Dependents = ifelse(Dependents == "" | Dependents == "NULL" | Dependents == "N/A", NA, Dependents)) %>%
+  mutate(Education = ifelse(Education == "" | Education == "NULL" | Education == "N/A", NA, Education)) %>%
+  mutate(Self_Employed = ifelse(Self_Employed == "" | Self_Employed == "NULL" | Self_Employed == "N/A", NA, Self_Employed)) %>%
+  mutate(ApplicantIncome = ifelse(ApplicantIncome == "" | ApplicantIncome == "NULL" | ApplicantIncome == "N/A", NA, ApplicantIncome)) %>%
+  mutate(CoapplicantIncome = ifelse(CoapplicantIncome == "" | CoapplicantIncome == "NULL" | CoapplicantIncome == "N/A", NA, CoapplicantIncome)) %>%
+  mutate(LoanAmount = ifelse(LoanAmount == "" | LoanAmount == "NULL" | LoanAmount == "N/A", NA, LoanAmount)) %>%
+  mutate(Loan_Amount_Term = ifelse(Loan_Amount_Term == "" | Loan_Amount_Term == "NULL" | Loan_Amount_Term == "N/A", NA, Loan_Amount_Term)) %>%
+  mutate(Credit_History = ifelse(Credit_History == "" | Credit_History == "NULL" | Credit_History == "N/A", NA, Credit_History)) %>%
+  mutate(Property_Area = ifelse(Property_Area== "" | Property_Area == "NULL" | Property_Area == "N/A", NA, Property_Area))
+```
+
+Utworzenie tabeli podsumowującej braki w tabeli
+
+```{r}
+miss_var_summary(dane)
+
+```
+
+Braki zauważamy w takich kategoriach jak: Credit_History, Self_Employed, Gender, Dependents, Loan_Amount_Term, LoanAmount. Zatem badamy brakujące dane wg poszczególnych kategorii.
+
+```{r}
+dane %>%
+  group_by(Credit_History) %>%
+    miss_var_summary() %>%
+    print(n=33)
+
+```
+
+```{r}
+gg_miss_var(dane, facet = Credit_History)
+```
+
+Braki w danych głównie są dla osób, które miały kredyt, w kategoriach takich jak Self_Employed, Gender, Dependents. Braki dla osób, które nie miały kredytu są głównie w kategorii Self_Employed.
+
+```{r}
+
+dane %>%
+  group_by(Self_Employed) %>%
+    miss_var_summary() %>%
+    print(n=33)
+```
+
+```{r}
+gg_miss_fct(dane, fct = Self_Employed)
+```
+
+Braki danych głównie są dla osób które nie są samozatrudnione, głównie w kategorii Credit_History (8.47%), Gender (2.93%), Dependents (2.93%). Osoby, które są samozatrudnione mają małe braki danych w kategoriach Gender (5.41%) i Credit\_ history (5.41%).
+
+```{r}
+ dane %>%
+  group_by(Gender) %>%
+    miss_var_summary() %>%
+    print(n=33)
+```
+
+```{r}
+gg_miss_var(dane, facet = Gender)
+```
+
+Nie ma znaczącego rozróznicowania braków ze względu na kategorie ze względu na płeć. Widać jednakże, że więcej braków jest u mężczyzn.
+
+```{r}
+dane %>%
+  group_by(Dependents) %>%
+    miss_var_summary() %>%
+    print(n=22)
+```
+
+```{r}
+gg_miss_var(dane, facet = Dependents)
+```
+
+Bez względu na ilość osób na utrzymaniu, braki są w takich kategoriach jak: Credit_History, Self_Employed. Najmniej rozróżnicowania braków w kategoriach jest dla osób mających 2 osoby na utrzymaniu.
+
+```{r}
+dane %>%
+  group_by(Loan_Amount_Term) %>%
+    miss_var_summary() %>%
+    print(n=10)
+```
+
+```{r}
+
+gg_miss_var(dane, facet = Loan_Amount_Term)
+
+```
+
+Znaczące braki mają osoby, które mają kredyty na okres roku.
+
+Wizualizacja braków danych
+
+```{r}
+dane %>%
+  miss_case_table()
+```
+
+W 289 wierszach nie brakuje żadnych danych, co stanowi 78.74 % wszystykich wierszy. W 72 wierszach brakuje 1 danej, co stanowi 19.61% wszystkich wierszy. W 6 wierszach brakuje równocześnie 2 danych, co stanowi 1.63% wszystkich wierszy.
+
+```{r}
+vis_miss(dane)
+```
+
+Ogólnie braki stanowią 1.9% wszystkich danych.
+
+Wizualizacja jak często braki współwystępują między zmiennymi
+
+```{r}
+gg_miss_upset(dane, nsets = 6)
+
+```
+
+Uzupełnienie braków danych następnie sprawdzenie czy wszystkie braki zostały uzupełnione.
+
+```{r}
+data <-hotdeck(dane)
+miss_var_summary(data)
+```
+
+Analiza danych odstających za pomocą histogramu.
+
+```{r}
+hist(
+  data$LoanAmount,
+  main = "Histogram wartości LoanAmount",
+  xlab = "Kwota pożyczki",
+  ylab = "Częstość",
+  col = "lightblue",
+  border = "black",
+  breaks = 20 # Możesz dostosować liczbę przedziałów
+)
+
+```
+
+```{r}
+
+hist(
+  data$ApplicantIncome,
+  main = "Histogram dla ApplicantIncome",
+  xlab = "Dochód wnioskodawcy",
+  ylab = "Częstość",
+  col = "lightblue",
+  border = "black",
+  breaks = 20 
+)
+```
+
+```{r}
+boxplot(
+  data$ApplicantIncome,
+  main = "Wykres pudełkowy dla ApplicantIncome",
+  ylab = "Dochód wnioskodawcy",
+  col = "lightgreen",
+  border = "black"
+)
+```
+
+```{r}
+
+hist(
+  data$CoapplicantIncome,
+  main = "Histogram dla CoapplicantIncome",
+  xlab = "Dochód współwnioskodawcy",
+  ylab = "Częstość",
+  col = "lightblue",
+  border = "black",
+  breaks = 20 
+)
+```
+
+```{r}
+boxplot(
+  data$CoapplicantIncome,
+  main = "Wykres pudełkowy dla CoapplicantIncome",
+  ylab = "Dochód współwnioskodawcy",
+  col = "lightpink",
+  border = "black"
+)
+
+```
+
+```{r}
+hist(
+  data$LoanAmount,
+  main = "Histogram dla LoanAmount",
+  xlab = "Kwota pożyczki",
+  ylab = "Częstość",
+  col = "lightblue",
+  border = "black",
+  breaks = 20 
+)
+```
+
+```{r}
+boxplot(
+  data$LoanAmount,
+  main = "Wykres pudełkowy dla LoanAmount",
+  ylab = "Kwota pożyczki",
+  col = "lightblue",
+  border = "black"
+)
+```
+
+```{r}
+
+hist(
+  data$Loan_Amount_Term,
+  main = "Histogram dla Loan_Amount_Term",
+  xlab = "Termin kwoty pożyczki",
+  ylab = "Częstość",
+  col = "lightblue",
+  border = "black",
+  breaks = 20 
+)
+```
+
+```{r}
+boxplot(
+  data$Loan_Amount_Term,
+  main = "Wykres pudełkowy dla Loan_Amount_Term",
+  ylab = "Termin pożyczki",
+  col = "pink",
+  border = "black"
+)
+```
+
+Porównanie grup
+
+```{r}
+boxplot(
+  LoanAmount ~ Married,
+  data = data,
+  main = "Wykres pudełkowy LoanAmount względem Married",
+  xlab = "Stan cywilny",
+  ylab = "Kwota pożyczki",
+  col = c("lightblue", "lightgreen"),
+  border = "black"
+)
+```
+
+```{r}
+boxplot(
+  ApplicantIncome ~ Education,
+  data = data,
+  main = "Wykres pudełkowy ApplicantIncome względem Education",
+  xlab = "Wykształcenie",
+  ylab = "Dochód wnioskodawcy",
+  col = c("lightblue", "lightpink"),
+  border = "black"
+)
+```
+
+Wysokość pożyczki wg wykształcenia
+
+```{r}
+ggplot(data, aes(x=Education,y=LoanAmount))+
+  geom_boxplot() +
+  labs(title="Wysokość pożyczki wg wykształcenia", x="Wykształcenie", y="Wysokość pożyczki") +
+  theme_bw() + #typ kolorystyczny wykresu
+  facet_wrap(~Gender) +
+  coord_flip() #obraca wykres
+  
+```
