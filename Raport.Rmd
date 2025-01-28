@@ -6,6 +6,9 @@ author:
   - "Aleksandra Sieliwoniuk"
 output: pdf_document
 ---
+Celem niniejszego projektu jest analiza danych związanych z udzielaniem kredytów hipotecznych, aby zidentyfikować kluczowe czynniki wpływające na decyzję o przyznaniu kredytu. Dzięki zastosowaniu narzędzi do analizy danych w języku R, przeanalizujemy, jakie cechy wnioskodawców i ich sytuacja finansowa mają największy wpływ na otrzymanie decyzji pozytywnej.
+W ramach analizy wykorzystamy zbiór danych zawierający różnorodne informacje o wnioskodawcach, w tym ich: płeć, stan cywilny, liczba osób na utrzymaniu, wykształcenie, zatrudnienie na własny rachunek, dochód głównego wnioskodawcy, dochód współwnioskodawcy, kwotę wnioskowanego kredytu, okres spłaty kredytu, historie kredytową oraz miejsce zamieszkania.
+
 
 Załadowanie potrzebnych bibliotek
 
@@ -14,6 +17,8 @@ library(naniar)
 library(dplyr)
 library(VIM)
 library(ggplot2)
+library(gtsummary)
+library(summarytools)
 ```
 
 Wprowadzenie danych
@@ -22,7 +27,7 @@ Wprowadzenie danych
 dane <- read.csv("Hipoteczny.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
 ```
 
-Zmiana pustych wartości na NA
+Zmiana pustych wartości na NA w celu poprawy jakości analizy danych, ponieważ niektóre wartości w zbiorze danych są puste (np. " ") i nie zostały oznaczone jako NA
 
 ```{r}
 dane <- dane %>%
@@ -74,7 +79,7 @@ dane %>%
 gg_miss_fct(dane, fct = Self_Employed)
 ```
 
-Braki danych głównie są dla osób które nie są samozatrudnione, głównie w kategorii Credit_History (8.47%), Gender (2.93%), Dependents (2.93%). Osoby, które są samozatrudnione mają małe braki danych w kategoriach Gender (5.41%) i Credit\_ history (5.41%).
+Braki danych głównie są dla osób które nie są samozatrudnione, głównie w kategorii Credit_History (8.47%), Gender (2.93%), Dependents (2.93%). Osoby, które są samozatrudnione mają małe braki danych w kategoriach Gender (5.41%) i Credit_history (5.41%).
 
 ```{r}
  dane %>%
@@ -138,8 +143,9 @@ Wizualizacja jak często braki współwystępują między zmiennymi
 gg_miss_upset(dane, nsets = 6)
 
 ```
+Podsumowując braki danych dotyczą głównie kategorii takich jak: Credit_History, Self_Employed, Gender, Dependents, Loan_Amount_Term oraz LoanAmount. Najwięcej braków występuje u osób, które miały historię kredytową, szczególnie w kategoriach Self_Employed i Gender. Wśród osób niesamozatrudnionych braki są bardziej widoczne w Credit_History (8.47%), Gender (2.93%) i Dependents (2.93%). Samozatrudnieni mają mniej braków, ale widoczne są one w Credit_History (5.41%) i Gender (5.41%). Więcej braków danych występuje u mężczyzn, jednak różnice między płciami nie są znaczące. W kategorii Dependents braki dotyczą głównie osób mających 0 lub 1 osobę na utrzymaniu, a najmniej braków obserwuje się u osób z 2 osobami na utrzymaniu. Największe luki w danych Loan_Amount_Term występują u osób z kredytami na okres jednego roku.
 
-Uzupełnienie braków danych następnie sprawdzenie czy wszystkie braki zostały uzupełnione.
+Braki te mogą wpłynąć na wyniki analizy, dlatego w kolejnym kroku uzupełnimy braki danych metodą hot deck imputation, która polega na uzupełnianiu braków danych poprzez przypisanie brakującej wartości na podstawie istniejących danych od podobnych obserwacji w zbiorze danych.Następnie sprawdzamy czy wszystkie braki zostały uzupełnione.
 
 ```{r}
 data <-hotdeck(dane)
@@ -290,3 +296,50 @@ ggplot(data, aes(x=Education,y=LoanAmount))+
   coord_flip() #obraca wykres
   
 ```
+
+W następnej części projektu przyjrzymy się statystyką opisową naszych zmiennych, a zaczniemy od podsumowania używający funkcji tbl_summary z biblioteki gtsummary. Dzięki temu szczególnie zobaczymy jak rozkładają się zmienne kategoryczne. 
+
+```{r}
+
+dane %>% 
+  select(Gender, Married, Dependents, Education, Self_Employed, 
+         ApplicantIncome, CoapplicantIncome, LoanAmount, 
+         Loan_Amount_Term, Credit_History, Property_Area) %>%
+  tbl_summary(
+    statistic = list(
+      all_continuous() ~ "{mean} ± {sd}",    # Średnia ± odchylenie standardowe
+      all_categorical() ~ "{n} ({p}%)"      # Częstość i procent dla zmiennych kategorycznych
+    ),
+    label = list(
+      Gender ~ "Płeć",
+      Married ~ "Stan cywilny",
+      Dependents ~ "Osoby na utrzymaniu",
+      Education ~ "Wykształcenie",
+      Self_Employed ~ "Samozatrudniony",
+      ApplicantIncome ~ "Dochód wnioskodawcy",
+      CoapplicantIncome ~ "Dochód współwnioskodawcy",
+      LoanAmount ~ "Kwota kredytu",
+      Loan_Amount_Term ~ "Okres kredytowania",
+      Credit_History ~ "Historia kredytowa",
+      Property_Area ~ "Obszar nieruchomości"
+    ),
+    missing = "no" # Wyklucz braki z podsumowania
+  )
+
+
+
+
+```
+
+Typowy wnioskodawca to mężczyzna (80%) z wyższym wykształceniem (77%), pozostający w związku małżeńskim (63%), bez osób na utrzymaniu (56%). Jego średni dochód wynosi 4,806 jednostek, a współwnioskodawcy 1,570 jednostek. W większości przypadków wnioskodawcy mają pozytywną historię kredytową (83%) i składają wnioski o kredyty na nieruchomości w obszarach miejskich (38%) lub półmiejskich (32%). Kwota kredytu wynosi przeciętnie 136 jednostek, a okres kredytowania to około 28,6 lat.
+W następnym kroku przyjrzymy się statystyką opisowym danych liczbowych.
+
+```{r}
+data %>% 
+  select(ApplicantIncome, CoapplicantIncome, LoanAmount, Loan_Amount_Term) %>%
+  summary()
+
+```
+Dochody głównego wnioskodawcy są znacznie wyższe od dochodów współwnioskodawców, a w wielu przypadkach współwnioskodawcy nie osiągają dochodów.Kwoty kredytów są umiarkowane, z medianą 125 jednostek, ale maksymalna kwota 550 jednostek wskazuje na obecność wnioskodawców potrzebujących znacznych środków.Typowy okres kredytowania wynosi 30 lat (360 miesięcy), co jest standardowym czasem w przypadku kredytów hipotecznych.```
+
+
