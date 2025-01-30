@@ -6,9 +6,10 @@ author:
   - "Aleksandra Sieliwoniuk"
 output: pdf_document
 ---
-Celem niniejszego projektu jest analiza danych związanych z udzielaniem kredytów hipotecznych, aby zidentyfikować kluczowe czynniki wpływające na decyzję o przyznaniu kredytu. Dzięki zastosowaniu narzędzi do analizy danych w języku R, przeanalizujemy, jakie cechy wnioskodawców i ich sytuacja finansowa mają największy wpływ na otrzymanie decyzji pozytywnej.
-W ramach analizy wykorzystamy zbiór danych zawierający różnorodne informacje o wnioskodawcach, w tym ich: płeć, stan cywilny, liczba osób na utrzymaniu, wykształcenie, zatrudnienie na własny rachunek, dochód głównego wnioskodawcy, dochód współwnioskodawcy, kwotę wnioskowanego kredytu, okres spłaty kredytu, historie kredytową oraz miejsce zamieszkania.
 
+### Kredyty Hipoteczne
+
+Celem niniejszego projektu jest analiza danych związanych z udzielaniem kredytów hipotecznych, aby zidentyfikować kluczowe czynniki wpływające na decyzję o przyznaniu kredytu. Dzięki zastosowaniu narzędzi do analizy danych w języku R, przeanalizujemy, jakie cechy wnioskodawców i ich sytuacja finansowa mają największy wpływ na otrzymanie decyzji pozytywnej. W ramach analizy wykorzystamy zbiór danych zawierający różnorodne informacje o wnioskodawcach, w tym ich: płeć, stan cywilny, liczba osób na utrzymaniu, wykształcenie, zatrudnienie na własny rachunek, dochód głównego wnioskodawcy, dochód współwnioskodawcy, kwotę wnioskowanego kredytu, okres spłaty kredytu, historie kredytową oraz miejsce zamieszkania.
 
 Załadowanie potrzebnych bibliotek
 
@@ -21,7 +22,7 @@ library(gtsummary)
 library(summarytools)
 ```
 
-Wprowadzenie danych
+### Wprowadzenie danych
 
 ```{r}
 dane <- read.csv("Hipoteczny.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
@@ -44,7 +45,7 @@ dane <- dane %>%
   mutate(Property_Area = ifelse(Property_Area== "" | Property_Area == "NULL" | Property_Area == "N/A", NA, Property_Area))
 ```
 
-Utworzenie tabeli podsumowującej braki w tabeli
+### Utworzenie tabeli podsumowującej braki w tabeli
 
 ```{r}
 miss_var_summary(dane)
@@ -122,7 +123,7 @@ gg_miss_var(dane, facet = Loan_Amount_Term)
 
 Znaczące braki mają osoby, które mają kredyty na okres roku.
 
-Wizualizacja braków danych
+### Wizualizacja braków danych
 
 ```{r}
 dane %>%
@@ -137,12 +138,13 @@ vis_miss(dane)
 
 Ogólnie braki stanowią 1.9% wszystkich danych.
 
-Wizualizacja jak często braki współwystępują między zmiennymi
+### Wizualizacja jak często braki współwystępują między zmiennymi
 
 ```{r}
 gg_miss_upset(dane, nsets = 6)
 
 ```
+
 Podsumowując braki danych dotyczą głównie kategorii takich jak: Credit_History, Self_Employed, Gender, Dependents, Loan_Amount_Term oraz LoanAmount. Najwięcej braków występuje u osób, które miały historię kredytową, szczególnie w kategoriach Self_Employed i Gender. Wśród osób niesamozatrudnionych braki są bardziej widoczne w Credit_History (8.47%), Gender (2.93%) i Dependents (2.93%). Samozatrudnieni mają mniej braków, ale widoczne są one w Credit_History (5.41%) i Gender (5.41%). Więcej braków danych występuje u mężczyzn, jednak różnice między płciami nie są znaczące. W kategorii Dependents braki dotyczą głównie osób mających 0 lub 1 osobę na utrzymaniu, a najmniej braków obserwuje się u osób z 2 osobami na utrzymaniu. Największe luki w danych Loan_Amount_Term występują u osób z kredytami na okres jednego roku.
 
 Braki te mogą wpłynąć na wyniki analizy, dlatego w kolejnym kroku uzupełnimy braki danych metodą hot deck imputation, która polega na uzupełnianiu braków danych poprzez przypisanie brakującej wartości na podstawie istniejących danych od podobnych obserwacji w zbiorze danych.Następnie sprawdzamy czy wszystkie braki zostały uzupełnione.
@@ -152,7 +154,7 @@ data <-hotdeck(dane)
 miss_var_summary(data)
 ```
 
-Analiza danych odstających za pomocą histogramu.
+### Analiza danych odstających za pomocą histogramu.
 
 ```{r}
 hist(
@@ -249,6 +251,10 @@ hist(
 )
 ```
 
+Histogram pokazuje rozkład terminów pożyczek i potwierdza, że zdecydowana większość przypadków przypada na jeden dominujący okres, prawdopodobnie 360 miesięcy.
+
+Widoczne są również inne rzadsze wartości, ale ich liczebność jest stosunkowo niska. Oznacza to, że w zbiorze danych występują różne okresy pożyczek, ale jeden (najdłuższy) jest zdecydowanie najczęściej wybierany przez klientów. Histogram pomaga lepiej zrozumieć rozkład wartości w porównaniu do boxplota, zwłaszcza w zakresie liczby obserwacji dla każdej grupy.
+
 ```{r}
 boxplot(
   data$Loan_Amount_Term,
@@ -259,7 +265,13 @@ boxplot(
 )
 ```
 
-Porównanie grup
+Wykres pudełkowy przedstawia rozkład długości terminu pożyczki. Większość wartości skupia się wokół jednej konkretnej wartości (najprawdopodobniej 360), co sugeruje, że standardowy okres pożyczki jest stały i dominujący.
+
+Obecność licznych wartości odstających wskazuje, że w zbiorze danych znajdują się również znacznie krótsze oraz niektóre dłuższe terminy, ale występują one rzadziej. Wąski zakres międzykwartylowy (IQR) oznacza, że większość terminów pożyczek jest bardzo podobna i ma małe zróżnicowanie.
+
+### Porównanie grup
+
+**Wysokość pożyczki wg stanu cywilnego**
 
 ```{r}
 boxplot(
@@ -273,6 +285,12 @@ boxplot(
 )
 ```
 
+Wykres pudełkowy przedstawia rozkład kwoty pożyczki (LoanAmount) w zależności od stanu cywilnego (Married). Osoby niezamężne (No) oraz zamężne (Yes) mają podobną medianę kwoty pożyczki, jednak w przypadku osób zamężnych rozkład wartości wydaje się być nieco szerszy.
+
+Widać również większą liczbę wartości odstających (outliers) wśród osób zamężnych, co sugeruje, że niektóre osoby w tej grupie zaciągnęły znacznie wyższe pożyczki. Zakres kwot pożyczek jest zbliżony w obu grupach, jednak ogólny rozrzut danych wydaje się większy dla osób zamężnych.
+
+**Dochód wnioskodawców wg wykształcenia**
+
 ```{r}
 boxplot(
   ApplicantIncome ~ Education,
@@ -285,7 +303,13 @@ boxplot(
 )
 ```
 
-Wysokość pożyczki wg wykształcenia
+Wykres pudełkowy przedstawia dochód wnioskodawców (ApplicantIncome) w podziale na poziom wykształcenia (Education). Widać, że mediany dochodów dla obu grup (Graduate i Not Graduate) są zbliżone, co sugeruje, że samo ukończenie studiów nie ma znaczącego wpływu na średni poziom zarobków.
+
+Jednak w grupie absolwentów (Graduate) występuje większa liczba wartości odstających, co oznacza, że niektórzy absolwenci osiągają znacznie wyższe dochody w porównaniu do osób bez wyższego wykształcenia. W szczególności widać kilka ekstremalnie wysokich dochodów (powyżej 60 000), które nie występują w grupie Not Graduate.
+
+Podsumowując, chociaż średnie dochody dla obu grup są podobne, wyższe wykształcenie może zwiększać szanse na bardzo wysokie zarobki, co widoczne jest w większej liczbie wartości odstających w grupie Graduate.
+
+**Wysokość pożyczki wg wykształcenia**
 
 ```{r}
 ggplot(data, aes(x=Education,y=LoanAmount))+
@@ -297,7 +321,15 @@ ggplot(data, aes(x=Education,y=LoanAmount))+
   
 ```
 
-W następnej części projektu przyjrzymy się statystyką opisową naszych zmiennych, a zaczniemy od podsumowania używający funkcji tbl_summary z biblioteki gtsummary. Dzięki temu szczególnie zobaczymy jak rozkładają się zmienne kategoryczne. 
+Wykres pudełkowy przedstawia wysokość pożyczki w podziale na poziom wykształcenia oraz płeć. Widać, że zarówno absolwenci (Graduate), jak i osoby bez wyższego wykształcenia (Not Graduate) mają podobny rozkład pożyczek. Mediany dla obu grup są zbliżone, co oznacza, że poziom wykształcenia nie ma dużego wpływu na wysokość pożyczki.
+
+Jednak zauważalne są wartości odstające, zwłaszcza wśród mężczyzn, którzy częściej otrzymują bardzo wysokie pożyczki (powyżej 300-500 tys.). Rozrzut wartości jest większy dla mężczyzn niż dla kobiet, co sugeruje, że mężczyźni mogą mieć większą różnorodność w kwotach pożyczek.
+
+Ogólnie, poziom wykształcenia nie wydaje się znacząco wpływać na medianę pożyczki, ale widać większą liczbę ekstremalnych wartości wśród mężczyzn, co może wskazywać na inne czynniki wpływające na wysokość kredytu.
+
+### Statystyka opisowa
+
+W następnej części projektu przyjrzymy się statystyką opisową naszych zmiennych, a zaczniemy od podsumowania używający funkcji tbl_summary z biblioteki gtsummary. Dzięki temu szczególnie zobaczymy jak rozkładają się zmienne kategoryczne.
 
 ```{r}
 
@@ -331,8 +363,7 @@ dane %>%
 
 ```
 
-Typowy wnioskodawca to mężczyzna (80%) z wyższym wykształceniem (77%), pozostający w związku małżeńskim (63%), bez osób na utrzymaniu (56%). Jego średni dochód wynosi 4,806 jednostek, a współwnioskodawcy 1,570 jednostek. W większości przypadków wnioskodawcy mają pozytywną historię kredytową (83%) i składają wnioski o kredyty na nieruchomości w obszarach miejskich (38%) lub półmiejskich (32%). Kwota kredytu wynosi przeciętnie 136 jednostek, a okres kredytowania to około 28,6 lat.
-W następnym kroku przyjrzymy się statystyką opisowym danych liczbowych.
+Typowy wnioskodawca to mężczyzna (80%) z wyższym wykształceniem (77%), pozostający w związku małżeńskim (63%), bez osób na utrzymaniu (56%). Jego średni dochód wynosi 4,806 jednostek, a współwnioskodawcy 1,570 jednostek. W większości przypadków wnioskodawcy mają pozytywną historię kredytową (83%) i składają wnioski o kredyty na nieruchomości w obszarach miejskich (38%) lub półmiejskich (32%). Kwota kredytu wynosi przeciętnie 136 jednostek, a okres kredytowania to około 28,6 lat. W następnym kroku przyjrzymy się statystyką opisowym danych liczbowych.
 
 ```{r}
 data %>% 
@@ -340,6 +371,5 @@ data %>%
   summary()
 
 ```
-Dochody głównego wnioskodawcy są znacznie wyższe od dochodów współwnioskodawców, a w wielu przypadkach współwnioskodawcy nie osiągają dochodów.Kwoty kredytów są umiarkowane, z medianą 125 jednostek, ale maksymalna kwota 550 jednostek wskazuje na obecność wnioskodawców potrzebujących znacznych środków.Typowy okres kredytowania wynosi 30 lat (360 miesięcy), co jest standardowym czasem w przypadku kredytów hipotecznych.```
 
-
+Dochody głównego wnioskodawcy są znacznie wyższe od dochodów współwnioskodawców, a w wielu przypadkach współwnioskodawcy nie osiągają dochodów.Kwoty kredytów są umiarkowane, z medianą 125 jednostek, ale maksymalna kwota 550 jednostek wskazuje na obecność wnioskodawców potrzebujących znacznych środków.Typowy okres kredytowania wynosi 30 lat (360 miesięcy), co jest standardowym czasem w przypadku kredytów hipotecznych.\`\`\`
