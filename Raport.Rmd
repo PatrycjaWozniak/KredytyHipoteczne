@@ -20,6 +20,7 @@ library(VIM)
 library(ggplot2)
 library(gtsummary)
 library(summarytools)
+library(ggstatsplot)
 ```
 
 ### Wprowadzenie danych
@@ -372,4 +373,106 @@ data %>%
 
 ```
 
-Dochody głównego wnioskodawcy są znacznie wyższe od dochodów współwnioskodawców, a w wielu przypadkach współwnioskodawcy nie osiągają dochodów.Kwoty kredytów są umiarkowane, z medianą 125 jednostek, ale maksymalna kwota 550 jednostek wskazuje na obecność wnioskodawców potrzebujących znacznych środków.Typowy okres kredytowania wynosi 30 lat (360 miesięcy), co jest standardowym czasem w przypadku kredytów hipotecznych.\`\`\`
+Dochody głównego wnioskodawcy są znacznie wyższe od dochodów współwnioskodawców, a w wielu przypadkach współwnioskodawcy nie osiągają dochodów.Kwoty kredytów są umiarkowane, z medianą 125 jednostek, ale maksymalna kwota 550 jednostek wskazuje na obecność wnioskodawców potrzebujących znacznych środków.Typowy okres kredytowania wynosi 30 lat (360 miesięcy), co jest standardowym czasem w przypadku kredytów hipotecznych.
+
+W kolejnej części wykonamy różne testy staystyczne. Zaczniemy od porównania średnich kwot kredytu w grupach z pozytywną i negatywną historią kredytową.Użyjemy do tego Test t-Studenta.
+
+```{r}
+ggbetweenstats(
+  data = data,
+  x = Credit_History,
+  y = LoanAmount
+)
+
+```
+
+Sprawdźmy, czy osoby z różnym wykształceniem biorą różne kwoty kredytu.Użyjemy do tego testu ANOVA.
+
+```{r}
+ggbetweenstats(
+  data = data,
+  x = Education,
+  y = LoanAmount
+)
+```
+
+Sprawdźmy, czy wyższy dochód głównego wnioskodawcy wiąże się z wyższą kwotą kredytu. Użyjemy do tego korelacji Pearsona.
+
+```{r}
+ggscatterstats(
+  data = data,
+  x = ApplicantIncome,
+  y = LoanAmount,
+  type = "pearson" # lub "spearman" dla danych nieparametrycznych
+)
+```
+Sprawdźmy, czy osoby z różnych lokalizacji biorą różne kwoty kredytu.
+Używamy testu ANoVA.
+```{r}
+ggbetweenstats(
+  data = data,
+  x = Property_Area,
+  y = LoanAmount
+)
+```
+
+Sprawdźmy, czy osoby z lepszą historią kredytową mają wyższe dochody. Użyjemy testu t-Studenta.
+
+```{r}
+ggbetweenstats(
+  data = data,
+  x = Credit_History,
+  y = ApplicantIncome
+)
+```
+
+Czy osoby z gorszą historią kredytową wybierają dłuższy okres spłaty? Użyjemy testu ANOVA.
+
+```{r}
+ggbetweenstats(
+  data = data,
+  x = Credit_History,
+  y = Loan_Amount_Term
+)
+```
+
+Sprawdźmy, czy osoby w różnych stanach cywilnych mają różne historie kredytowe. Użyjemy testu chi-kwadrat.
+
+```{r}
+ggbarstats(
+  data = data,
+  x = Married,
+  y = Credit_History
+)
+```
+
+Czy liczba osób na utrzymaniu wpływa na historię kredytową? Użyjemy korelacji Spearmana.
+
+```{r}
+ggscatterstats(
+  data = data,
+  x = Dependents,
+  y = Credit_History
+)
+
+```
+
+Czy osoby samozatrudnione mają gorszą historię kredytową? Użyjemy testu chi-kwadrat.
+
+```{r}
+ggbarstats(
+  data = data,
+  x = Self_Employed,
+  y = Credit_History
+)
+```
+
+Czy osoby z miast mają lepszą historię kredytową niż osoby z terenów wiejskich? Użyjemy testu chi-kwadrat.
+
+```{r}
+ggbarstats(
+  data = data,
+  x = Property_Area,
+  y = Credit_History
+)
+```
