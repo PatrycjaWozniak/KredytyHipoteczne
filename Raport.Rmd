@@ -417,6 +417,7 @@ ggbetweenstats(
   y = ApplicantIncome
 )
 ```
+Wykres przedstawia porównanie dochodów osób w zależności od ich historii kredytowej, wykorzystując test t-Studenta. Średni dochód osób z dobrą historią kredytową (wartość 1) wynosi około 5009,76, natomiast osób z gorszą historią (wartość 0) – 3857,03. Test t-Studenta wskazuje istotną statystycznie różnicę (p=0.01), choć efekt jest raczej niewielki (gHedges​=−0.28). Oznacza to, że osoby z lepszą historią kredytową mają statystycznie wyższe dochody, ale różnica ta nie jest bardzo duża.
 
 Czy osoby z gorszą historią kredytową wybierają dłuższy okres spłaty? Użyjemy testu ANOVA.
 
@@ -427,6 +428,7 @@ ggbetweenstats(
   y = Loan_Amount_Term
 )
 ```
+Wykres przedstawia porównanie długości okresu spłaty kredytu w zależności od historii kredytowej. Średni okres spłaty dla osób z gorszą historią kredytową wynosi 350,86, a dla osób z dobrą historią 341,09. Test statystyczny nie wykazuje istotnej różnicy (p=0,30), co oznacza, że historia kredytowa nie ma znaczącego wpływu na wybór długości okresu spłaty. W praktyce oznacza to, że osoby z gorszą historią kredytową nie wybierają istotnie dłuższych okresów spłaty w porównaniu do osób z dobrą historią.
 
 Sprawdźmy, czy osoby w różnych stanach cywilnych mają różne historie kredytowe. Użyjemy testu chi-kwadrat.
 
@@ -437,6 +439,7 @@ ggbarstats(
   y = Credit_History
 )
 ```
+Wykres przedstawia zależność między stanem cywilnym a historią kredytową. Rozkład procentowy osób z dobrą i złą historią kredytową jest podobny w obu grupach – 60% vs. 64% dla osób zamężnych i niezamężnych. Test chi-kwadrat (p=0,52) nie wykazał istotnej statystycznie zależności, co oznacza, że stan cywilny nie ma istotnego wpływu na historię kredytową. W praktyce sugeruje to, że bycie w związku małżeńskim lub jego brak nie jest istotnym czynnikiem wpływającym na historię kredytową.
 
 Czy liczba osób na utrzymaniu wpływa na historię kredytową? Użyjemy korelacji Spearmana.
 
@@ -448,6 +451,7 @@ ggbetweenstats(
 )
 
 ```
+Osoby bez osób na utrzymaniu mają najwyższą średnią historię kredytową: 0.82. Osoby z 1 lub 2 osobami na utrzymaniu mają podobne średnie wartości: 0.80 i 0.78. Osoby z 3+ osobami na utrzymaniu mają najniższą średnią historię kredytową 0.74, co może sugerować większe trudności w uzyskaniu pozytywnej historii kredytowej. Możemy również zauważyć, że w każdej grupie większość danych znajduje się blisko wartości 1, co oznacza, że większość wnioskodawców ma pozytywną historię kredytową. Widzimy rónież, że im większa liczba osób na utrzymaniu, tym bardziej wydłużony kształt wykresu w dolnych wartościach, co może sugerować większą różnorodność w historii kredytowej. Test ANOVA pokazuje p.value = 0.15 co oznacza brak istotnej różnicy statystycznej między grupami. Podsumowując nie ma istotnych statystycznie różnic w historii kredytowej między grupami zależnymi od liczby osób na utrzymaniu.
 
 Czy osoby samozatrudnione mają gorszą historię kredytową? Użyjemy testu chi-kwadrat.
 
@@ -458,6 +462,7 @@ ggbarstats(
   y = Credit_History
 )
 ```
+Wykres przedstawia analizę związku między samozatrudnieniem a historią kredytową z wykorzystaniem testu chi-kwadrat. Wyniki pokazują, że odsetek osób z dobrą historią kredytową jest bardzo podobny zarówno wśród samozatrudnionych (91%), jak i niesamozatrudnionych (88%). Wartość statystyki chi-kwadrat (x2 = 0.30, p = 0.58) sugeruje brak istotnej różnicy między grupami, co potwierdza również bardzo niska wartość współczynnika V Cramera (0.00). Oznacza to, że status samozatrudnienia nie ma istotnego wpływu na historię kredytową w badanej próbie.
 
 Czy osoby z miast mają lepszą historię kredytową niż osoby z terenów wiejskich? Użyjemy testu chi-kwadrat.
 
@@ -468,3 +473,27 @@ ggbarstats(
   y = Credit_History
 )
 ```
+
+Wykres przedstawia analizę zależności między obszarem zamieszkania a historią kredytową. Wyniki testu chi-kwadrat (x2 = 1.17, p = 0.56) wskazują, że nie ma istotnej statystycznie różnicy w historii kredytowej między osobami mieszkającymi w miastach, na przedmieściach i na obszarach wiejskich. Współczynnik V Cramera (0.00) również sugeruje brak zależności. Oznacza to, że miejsce zamieszkania nie ma znaczącego wpływu na historię kredytową w badanej próbie.
+
+
+### Podsumowanie 
+
+Podsumowanie analizy kredytów hipotecznych
+Celem analizy było zidentyfikowanie kluczowych czynników wpływających na decyzję o przyznaniu kredytu hipotecznego. W tym celu przeanalizowano dane dotyczące wnioskodawców, takie jak dochód, stan cywilny, historia kredytowa czy wysokość wnioskowanej kwoty.
+
+Braki danych
+Najwięcej braków dotyczyło kategorii: historii kredytowej, samozatrudnienia, płci, liczby osób na utrzymaniu, okresu spłaty kredytu oraz wysokości kredytu. Braki te częściej występowały u osób posiadających historię kredytową oraz u mężczyzn. Dane uzupełniono metodą hot deck imputation, co pozwoliło na eliminację luk i poprawę jakości analizy.
+
+Analiza wartości odstających
+Rozkład dochodów wnioskodawców i współwnioskodawców był silnie prawoskośny, co oznacza, że dominowały niższe dochody, a nieliczne wartości odstające wskazywały na wysokie zarobki niektórych osób. Podobnie w przypadku wysokości kredytu – wPodsumowanie analizy kredytów hipotecznych
+Celem analizy było zidentyfikowanie kluczowych czynników wpływających na decyzję o przyznaniu kredytu hipotecznego. W tym celu przeanalizowano dane dotyczące wnioskodawców, takie jak dochód, stan cywilny, historia kredytowa czy wysokość wnioskowanej kwoty.
+
+Wnioskowanie
+Wyniki wskazują, że wykształcenie ma istotny wpływ na wysokość przyznawanego kredytu. Osoby z wyższym wykształceniem otrzymują średnio wyższe kwoty kredytów niż osoby bez wyższego wykształcenia. Dochód wnioskodawcy również wykazuje wyraźną zależność z wysokością kredytu – im wyższy dochód, tym większa kwota przyznanego kredytu. Zauważono również, że osoby z wyższym dochodem mają większą szansę na uzyskanie wyższych kredytów, ale inne czynniki także odgrywają ważną rolę.
+
+Miejsce zamieszkania, takie jak życie w miastach, przedmieściach czy na terenach wiejskich, nie miało istotnego wpływu na wysokość kredytu. Dodatkowo, brak było znaczącej różnicy w historii kredytowej w zależności od miejsca zamieszkania. Podobnie, stan cywilny czy liczba osób na utrzymaniu nie miały znaczącego wpływu na historię kredytową, choć w przypadku osób z większą liczbą osób na utrzymaniu zaobserwowano pewne różnice w historii kredytowej, ale nie były one istotne statystycznie.
+
+Co się tyczy dochodów w zależności od historii kredytowej, osoby z lepszą historią kredytową miały wyższe dochody, co może sugerować, że dobra historia kredytowa jest powiązana z wyższym poziomem dochodów, chociaż różnice w dochodach były stosunkowo niewielkie. Na koniec, analiza wskazała, że historia kredytowa nie miała wpływu na wybór długości okresu spłaty kredytu, co sugeruje, że osoby z różnymi historiami kredytowymi podejmują podobne decyzje odnośnie do tego aspektu kredytu.
+
+Podsumowując, wykształcenie i dochód wnioskodawcy okazały się mieć znaczący wpływ na wysokość przyznanego kredytu. Historia kredytowa była związana z dochodami, ale inne czynniki, takie jak miejsce zamieszkania, stan cywilny czy liczba osób na utrzymaniu, nie miały większego wpływu na decyzje kredytowe.
