@@ -373,6 +373,7 @@ ggbetweenstats(
 )
 
 ```
+Średnia kwota kredytu dla osób z negatywną historią kredytową wynosi 145.06, a dla osób z pozytywną historią kredytową 134.08. Jest to niewielka różnica. Test t-Studenta został użyty do porównania średnich kwot kredytu między grupami. P-value = 0.22 co oznacza, brak istotnej statystycznej różnicy między tymi grupami. Dodatkowo wartość statystki t=1.23 również sugeruje nieznaczącą różnice. Zatem historia kredytowa nie ma istotnego wpływu na kwotę udzielanego kredytu w tej próbie.
 
 Sprawdźmy, czy osoby z różnym wykształceniem biorą różne kwoty kredytu.Użyjemy do tego testu ANOVA.
 
@@ -383,6 +384,7 @@ ggbetweenstats(
   y = LoanAmount
 )
 ```
+Osoby z wyższym wykształceniem mają średnią kwotę kredytu 140.94, a osoby bez wyższego wykształcenia mają średnią kwotę kredytu 119.35. Różnica wynosi 21.59, oznacza to, że osoby z wyższym wykształceniem otrzymują wyższe kredyty. Za pomocą testy t-Studenta porównaliśmy te kwoty i otrzymałyśmy p-value <0.001, co oznacza istotność statystyczną i wpływ wykształcenia na wysokość kredytu. Wartość t = 3.84 mówi nam, że różnica między grupami jest znacząca. Przedział ufności: [0.19, 0.61] nie obejmuje 0, co potwierdza istotność różnicy. Podsumowując osoby z wyższym wykształceniem uzyskują średnio wyższe kredyty niż osoby bez wyższego wykształcenia. 
 
 Sprawdźmy, czy wyższy dochód głównego wnioskodawcy wiąże się z wyższą kwotą kredytu. Użyjemy do tego korelacji Pearsona.
 
@@ -394,8 +396,9 @@ ggscatterstats(
   type = "pearson" # lub "spearman" dla danych nieparametrycznych
 )
 ```
-Sprawdźmy, czy osoby z różnych lokalizacji biorą różne kwoty kredytu.
-Używamy testu ANoVA.
+Współczynnik korelacji Pearsona wynosi 0.49, co oznacza średnią do umiarkowanie silnej dodatnią zależność między dochodem a kwotą kredytu. Im wyższy dochód wnioskodawcy, tym wyższa przyznawana kwota kredytu. Bardzo niski poziom p-value < 0.001 wskazuje, że zależność ta jest istotna statystycznie. Z przedziałem ufności 95% możemy powiedzieć, że wartość korelacji w populacji mieści się w zakresie 0.41-0.57. Przedział ten nie obejmuje 0, zatem zależność jest mocno potwierdzona. Podsumowując istnieje umiarkowanie silna zależność między dochodem a kwotą kredytu – wyższy dochód zwiększa prawdopodobieństwo uzyskania większego kredytu. Jednakże wartość r wskazuje, że inne czynniki również mają znaczący wpływ na kwotę kredytu.
+
+Sprawdźmy, czy osoby z różnych lokalizacji biorą różne kwoty kredytu.Używamy testu ANOVA.
 ```{r}
 ggbetweenstats(
   data = data,
@@ -403,6 +406,7 @@ ggbetweenstats(
   y = LoanAmount
 )
 ```
+Średnia kwota pożyczki dla osób zamieszkujące obszary wiejskie wynosi 138.59 tyś, dla osób mieszkających  na przedmieściach średnia wynosi 133.53 tyś, a dla osób mieszkających w miastach 135.97 tyś. Zatem widzimy niewielie róznice w kwotach ze względu na obszar zamieszkania. Dodatkowo możemy zauważyć szeroki rozkład kwot kredytów, ale większość danych skupia się wokół wartości około 100-150 tys. W obszarze miejskim występują pojedyncze wyższe wartości (powyżej 400 tys.), co może wskazywać na kilka dużych pożyczek. Wartość testu Welch’a F(2, 240.12) = 0.21 oraz p = 0.81 sugerują, że nie ma istotnych statystycznie różnic między średnimi wysokościami pożyczek w różnych obszarach. Wskaźnik η²p = 0.00 potwierdza bardzo mały efekt różnic. Podsumowując miejsce zamieszkania nie wpływa istotnie na wysokość pożyczki
 
 Sprawdźmy, czy osoby z lepszą historią kredytową mają wyższe dochody. Użyjemy testu t-Studenta.
 
@@ -437,7 +441,7 @@ ggbarstats(
 Czy liczba osób na utrzymaniu wpływa na historię kredytową? Użyjemy korelacji Spearmana.
 
 ```{r}
-ggscatterstats(
+ggbetweenstats(
   data = data,
   x = Dependents,
   y = Credit_History
