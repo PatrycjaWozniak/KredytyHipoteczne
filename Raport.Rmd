@@ -169,7 +169,7 @@ hist(
 )
 
 ```
-
+Większość pożyczek jest stosunkowo niska, najczęściej w przedziale 100-150. Rozkład jest prawoskośny, co oznacza, że dominują mniejsze kwoty, a większe pożyczki są znacznie rzadsze. Można zauważyć kilka wartości powyżej 300, co sugeruje obecność nielicznych, ale znaczących kredytów, które mogą być odstającymi danymi. Jeśli dane dotyczą kredytów konsumenckich, może to wskazywać na politykę instytucji finansowych, które rzadziej udzielają bardzo wysokich pożyczek.
 ```{r}
 
 hist(
@@ -182,7 +182,7 @@ hist(
   breaks = 20 
 )
 ```
-
+Większość wnioskodawców ma stosunkowo niski dochód, co widać po dużej liczbie obserwacji skoncentrowanych w najniższych przedziałach. Rozkład jest silnie prawoskośny, co oznacza, że występuje kilka przypadków bardzo wysokich dochodów, ale są one rzadkie. Takie wartości odstające mogą wskazywać na obecność osób o znacznie wyższych zarobkach, co może wpływać na średnią, ale nie na ogólną strukturę dochodów większości wnioskodawców.
 ```{r}
 boxplot(
   data$ApplicantIncome,
@@ -192,7 +192,7 @@ boxplot(
   border = "black"
 )
 ```
-
+Wykres pudełkowy dla dochodu wnioskodawcy pokazuje, że większość wartości jest stosunkowo niska i skoncentrowana blisko dolnej części skali. Mediana dochodów znajduje się nisko, co potwierdza wcześniejszą obserwację o prawoskośnym rozkładzie danych. Widać również dużą liczbę wartości odstających powyżej górnej granicy, co oznacza, że istnieją pojedyncze przypadki osób o znacznie wyższych dochodach w porównaniu do reszty.
 ```{r}
 
 hist(
@@ -205,7 +205,7 @@ hist(
   breaks = 20 
 )
 ```
-
+Histogram przedstawia rozkład dochodu współwnioskodawców. Widać, że większość wartości skupia się w niskim zakresie dochodów, a liczba współwnioskodawców gwałtownie maleje wraz ze wzrostem dochodu. Rozkład jest silnie skośny w prawo, co oznacza, że niewielka liczba osób ma bardzo wysokie dochody, ale większość znajduje się na niższych poziomach. Możliwe, że istnieją wartości odstające, które znacząco przewyższają typowe dochody
 ```{r}
 boxplot(
   data$CoapplicantIncome,
@@ -216,19 +216,7 @@ boxplot(
 )
 
 ```
-
-```{r}
-hist(
-  data$LoanAmount,
-  main = "Histogram dla LoanAmount",
-  xlab = "Kwota pożyczki",
-  ylab = "Częstość",
-  col = "lightblue",
-  border = "black",
-  breaks = 20 
-)
-```
-
+Wykres pudełkowy pokazuje, że większość dochodów współwnioskodawców jest skoncentrowana w dolnym zakresie wartości. Środkowe 50% danych (między pierwszym a trzecim kwartylem) obejmuje stosunkowo niewielki przedział dochodów, co wskazuje na dużą koncentrację niskich wartości. Mediana znajduje się nisko, co potwierdza prawoskośność rozkładu. Występuje wiele wartości odstających, które znacznie przewyższają resztę danych, co sugeruje istnienie kilku współwnioskodawców z wyjątkowo wysokimi dochodami
 ```{r}
 boxplot(
   data$LoanAmount,
@@ -238,7 +226,7 @@ boxplot(
   border = "black"
 )
 ```
-
+Większość pożyczek jest stosunkowo niska, najczęściej w przedziale 100-150. Rozkład jest prawoskośny, co oznacza, że dominują mniejsze kwoty, a większe pożyczki są znacznie rzadsze. Można zauważyć kilka wartości powyżej 300, co sugeruje obecność nielicznych, ale znaczących kredytów, które mogą być odstającymi danymi. Jeśli dane dotyczą kredytów konsumenckich, może to wskazywać na politykę instytucji finansowych, które rzadziej udzielają bardzo wysokich pożyczek.
 ```{r}
 
 hist(
